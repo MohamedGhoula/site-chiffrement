@@ -3,106 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberSecurity - Mohamed Ghoula</title>
+    <title>Chiffrement de Fichier - SECUREPRO</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cryptojs/4.1.1/crypto-js.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
-    <div id="login-page" class="container">
-        <div class="card">
-            <i class="fa-solid fa-shield-halved login-icon"></i>
-            <h2>Authentification</h2>
-            <div class="form-group">
-                <label>Profil d'accès :</label>
-                <select id="role-select">
-                    <option value="employe">Employé</option>
-                    <option value="admin">Administrateur</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Clé de session :</label>
-                <input type="password" id="password-input" placeholder="••••••••">
-            </div>
-            <button id="btn-login" class="btn">DÉVERROUILLER</button>
-            <p id="login-error" class="error-message"></p>
-        </div>
-    </div>
-
-    <div id="dashboard-page" class="dashboard-container" style="display: none;">
+    <div class="dashboard-container">
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h3>SECURE<span>PRO</span></h3>
-                <span id="user-badge" class="badge">--</span>
+                <span id="user-badge" class="badge">ADMIN</span>
             </div>
             <ul class="nav-links">
                 <li class="active" data-target="section-chiffrement"><i class="fa-solid fa-lock"></i> Chiffrement</li>
                 <li data-target="section-coffre"><i class="fa-solid fa-vault"></i> Coffre-fort</li>
-                <li id="menu-historique" data-target="section-historique"><i class="fa-solid fa-clock-rotate-left"></i> Historique</li>
-                <li id="menu-parametres" data-target="section-parametres"><i class="fa-solid fa-gears"></i> Paramètres</li>
+                <li data-target="section-historique"><i class="fa-solid fa-clock-rotate-left"></i> Historique</li>
+                <li data-target="section-parametres"><i class="fa-solid fa-gears"></i> Paramètres</li>
             </ul>
             <div class="sidebar-footer">
-                <button id="btn-logout" class="btn btn-danger">QUITTER</button>
+                <button id="btn-logout" class="btn-quit">QUITTER</button>
             </div>
         </nav>
 
         <main class="content-area">
-            
+
             <section id="section-chiffrement" class="tab-content active">
-                <div class="header-section">
-                    <h2>Moteur de Chiffrement AES-256</h2>
-                    <p>Interface de sécurisation des données en temps réel.</p>
+                <div class="main-title-zone">
+                    <h2>CHIFFREMENT DE FICHIER</h2>
+                    <p>Sécurisez vos communications confidentielles.</p>
                 </div>
+
+                <div class="type-selector">
+                    <button id="type-message" class="type-btn">Message</button>
+                    <button id="type-fichier" class="type-btn active">Fichier</button>
+                </div>
+
+                <div class="action-selector">
+                    <button id="mode-encrypt" class="action-btn"><i class="fa-solid fa-lock-open"></i> Chiffrer</button>
+                    <button id="mode-decrypt" class="action-btn active"><i class="fa-solid fa-lock"></i> Déchiffrer</button>
+                </div>
+
                 <div class="encryption-grid">
-                    <div class="panel">
-                        <h3><i class="fa-solid fa-file-signature"></i> Entrée</h3>
-                        <div class="toggle-container">
-                            <button id="mode-encrypt" class="toggle-btn active">CHIFFRER</button>
-                            <button id="mode-decrypt" class="toggle-btn">DÉCHIFFRER</button>
+                    <div class="panel-box">
+                        <h3>FICHIER À TRAITER</h3>
+                        <div class="drop-zone" id="drop-zone">
+                            <i class="fa-solid fa-folder-open folder-icon"></i>
+                            <p id="file-status-text">Fichier chargé : DEVIS-I-26-04-4-MON-CLIENT-PRO.pdf</p>
+                            <input type="file" id="file-picker" style="display: none;">
                         </div>
-                        <textarea id="text-input" placeholder="Saisissez votre texte..."></textarea>
-                        <div class="form-group">
+                        
+                        <div class="key-container">
                             <label>Clé secrète (Passphrase) :</label>
-                            <input type="password" id="secret-key" placeholder="Clé de chiffrement">
+                            <input type="password" id="secret-key" placeholder="Entrez la clé de chiffrement">
                         </div>
-                        <button id="btn-process" class="btn">EXÉCUTER</button>
+                        <button id="btn-process" class="process-btn">DÉCHIFFRER LE FICHIER</button>
                     </div>
                     
-                    <div class="panel">
-                        <h3><i class="fa-solid fa-key"></i> Sortie</h3>
-                        <textarea id="text-output" readonly placeholder="Résultat..."></textarea>
-                        <div class="action-buttons">
-                            <button id="btn-copy" class="btn btn-secondary"><i class="fa-solid fa-copy"></i> COPIER</button>
-                            <button id="btn-download" class="btn btn-success"><i class="fa-solid fa-download"></i> TÉLÉCHARGER</button>
+                    <div class="panel-box">
+                        <h3>FICHIER TRAITÉ</h3>
+                        <div class="result-zone">
+                            <p id="result-status-text" class="success-text">Fichier traité avec succès (AES-256) !</p>
+                            <button id="btn-download" class="download-btn">TÉLÉCHARGER</button>
                         </div>
                     </div>
                 </div>
+                <div class="dots-separator">••••</div>
             </section>
 
             <section id="section-coffre" class="tab-content" style="display: none;">
-                <h2>Coffre-fort local</h2>
-                <div class="vault-grid">
-                    <div class="card-param">
-                        <h3>Éléments sécurisés</h3>
-                        <p>Aucun fichier exporté vers le coffre-fort pour le moment.</p>
-                    </div>
+                <h2>Coffre-fort Virtuel</h2>
+                <p class="section-desc">Espace de stockage temporaire sécurisé pour vos clés de session.</p>
+                <div class="info-card">
+                    <p><i class="fa-solid fa-circle-info"></i> Aucun élément archivé dans le coffre pour le moment.</p>
                 </div>
             </section>
 
             <section id="section-historique" class="tab-content" style="display: none;">
-                <div class="header-section">
-                    <h2>Historique des Activités</h2>
-                    <p>Traces d'audit des opérations effectuées pendant la session.</p>
-                </div>
-                <div class="panel">
+                <h2>Historique des Activités</h2>
+                <p class="section-desc">Traces d'audit de sécurité de l'application (Logs de session).</p>
+                <div class="table-container">
                     <table class="log-table">
                         <thead>
                             <tr>
                                 <th>Heure</th>
                                 <th>Utilisateur</th>
                                 <th>Action</th>
-                                <th>État</th>
+                                <th>Statut</th>
                             </tr>
                         </thead>
                         <tbody id="log-tbody">
@@ -112,24 +100,18 @@
             </section>
 
             <section id="section-parametres" class="tab-content" style="display: none;">
-                <h2>Configuration Système</h2>
+                <h2>Paramètres Système</h2>
+                <p class="section-desc">Informations sur l'état du protocole cryptographique.</p>
                 <div class="params-grid">
-                    <div class="card-param">
-                        <h3><i class="fa-solid fa-microchip"></i> Algorithme</h3>
-                        <p>Nom : <strong>AES (Advanced Encryption Standard)</strong></p>
-                        <p>Force : <strong>256 bits</strong></p>
-                        <p>Mode : <strong>CBC (Cipher Block Chaining)</strong></p>
+                    <div class="param-card">
+                        <h4><i class="fa-solid fa-shield-halved"></i> Spécifications</h4>
+                        <p>Algorithme : <strong>AES-256 bits</strong></p>
+                        <p>Mode de bloc : <strong>CBC (Cipher Block Chaining)</strong></p>
                     </div>
-                    <div class="card-param">
-                        <h3><i class="fa-solid fa-server"></i> État du Système</h3>
-                        <p>Moteur : <span class="status-online">En ligne</span></p>
-                        <p>Version : <strong>v4.2.0-stable</strong></p>
-                        <p>Latence : <strong>0.02ms</strong></p>
-                    </div>
-                    <div class="card-param">
-                        <h3><i class="fa-solid fa-user-shield"></i> Sécurité Profil</h3>
-                        <p>Niveau d'accès : <strong id="param-role">--</strong></p>
-                        <p>Chiffrement local : <strong>Activé</strong></p>
+                    <div class="param-card">
+                        <h4><i class="fa-solid fa-circle-check"></i> Intégrité</h4>
+                        <p>Statut du moteur : <span class="status-green">Opérationnel</span></p>
+                        <p>Version : <strong>v2.4.1</strong></p>
                     </div>
                 </div>
             </section>
