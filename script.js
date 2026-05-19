@@ -1,125 +1,127 @@
-// --- INITIALISATION & STOCKAGE DE SESSiON ---
+// --- INITIALISATION ---
+let userRole = "employe";
 let logs = [];
-// Simulation d'un fichier chiffré en mémoire globale pour l'exemple du bouton
-window.resultatFichierTraite = "Données cryptées de session générées par l'algorithme AES-256...";
 
-// --- SYSTEME DE NAVIGATION DU MENU LATÉRAL ---
-const navItems = document.querySelectorAll('.nav-links li');
-const sections = document.querySelectorAll('.tab-content');
+// --- GESTION CONNEXION ---
+document.getElementById('btn-login').addEventListener('click', () => {
+    const pass = document.getElementById('password-input').value;
+    userRole = document.getElementById('role-select').value;
 
-navItems.forEach(item => {
-    item.addEventListener('click', () => {
-        // Désactiver tous les onglets du menu
-        navItems.forEach(nav => nav.classList.remove('active'));
-        // Cacher toutes les vues de l'interface
-        sections.forEach(sec => sec.style.display = 'none');
+    if (pass.length < 4) {
+        document.getElementById('login-error').textContent = "Clé trop courte (min 4).";
+        return;
+    }
 
-        // Activer l'onglet sélectionné
-        item.classList.add('active');
-        const targetId = item.getAttribute('data-target');
-        document.getElementById(targetId).style.display = 'block';
+    // Affichage Dashboard
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('dashboard-page').style.display = 'flex';
+    document.getElementById('user-badge').textContent = userRole.toUpperCase();
+    document.getElementById('param-role').textContent = userRole.toUpperCase();
+
+    // Restriction Admin
+    if (userRole === "admin") {
+        document.getElementById('menu-historique').style.display = 'block';
+    } else {
+        document.getElementById('menu-historique').style.display = 'none';
+    }
+
+    addLog("Authentification", "Succès");
+});
+
+// --- NAVIGATION ---
+const links = document.querySelectorAll('.nav-links li');
+links.forEach(link => {
+    link.addEventListener('click', () => {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        
+        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+        document.getElementById(link.getAttribute('data-target')).style.display = 'block';
     });
 });
 
-// --- PERMETTRE LE CLIC POUR SÉLECTIONNER UN VRAI FICHIER LOCAL ---
-const dropZone = document.getElementById('drop-zone');
-const filePicker = document.getElementById('file-picker');
-const fileStatusText = document.getElementById('file-status-text');
+// --- CHIFFREMENT ---
+let mode = "encrypt";
+document.getElementById('mode-encrypt').onclick = () => { mode = "encrypt"; updateToggle(); };
+document.getElementById('mode-decrypt').onclick = () => { mode = "decrypt"; updateToggle(); };
 
-dropZone.addEventListener('click', () => {
-    filePicker.click();
-});
-
-filePicker.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) {
-        const nomFichier = e.target.files[0].name;
-        fileStatusText.textContent = "Fichier chargé : " + nomFichier;
-        ajouterLog("Import Fichier", "Fichier prêt (" + nomFichier + ")");
-    }
-});
-
-// --- ENCLENCHEMENT DU TRAITEMENT CRYPTO ---
-const btnProcess = document.getElementById('btn-process');
-const resultStatusText = document.getElementById('result-status-text');
-
-btnProcess.addEventListener('click', () => {
-    const key = document.getElementById('secret-key').value.trim();
-
-    if (!key) {
-        alert("Veuillez saisir votre clé secrète de chiffrement !");
-        return;
-    }
-
-    // Affichage de la réussite sur l'IHM
-    resultStatusText.textContent = "Fichier traité avec succès (AES-256) !";
-    resultStatusText.style.color = "#00b0ff";
-    
-    // Remplissage simulé pour le téléchargement
-    window.resultatFichierTraite = "Fichier sécurisé avec succès via la clé de session.\n[Données de l'algorithme d'entreprise AES-256 bits]";
-
-    ajouterLog("Exécution Crypto", "Succès");
-    alert("Le traitement de fichier a été effectué ! Vous pouvez maintenant le télécharger.");
-});
-
-// --- REPARATION CRITIQUE : FONCTIONNEMENT DU BOUTON TÉLÉCHARGER ---
-const btnDownload = document.getElementById('btn-download');
-
-btnDownload.addEventListener('click', () => {
-    const data = window.resultatFichierTraite;
-
-    if (!data) {
-        alert("Aucun fichier traité n'est disponible pour le téléchargement.");
-        return;
-    }
-
-    // 1. Création du conteneur Blob virtuel en mémoire
-    const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
-    
-    // 2. Attribution d'une adresse de téléchargement locale temporaire
-    const url = URL.createObjectURL(blob);
-    
-    // 3. Liaison automatique à un élément HTML d'ancrage masqué
-    const dummyLink = document.createElement('a');
-    dummyLink.href = url;
-    dummyLink.download = "export_sec_traite.txt"; // Nom du fichier qui sera créé dans les téléchargements Windows
-    
-    // 4. Déclenchement matériel du clic de téléchargement
-    document.body.appendChild(dummyLink);
-    dummyLink.click();
-    
-    // 5. Nettoyage et destruction de l'élément devenu inutile
-    document.body.removeChild(dummyLink);
-    URL.revokeObjectURL(url);
-
-    ajouterLog("Téléchargement", "Fichier exporté");
-});
-
-// --- CRÉATION EN TEMPS RÉEL DE L'HISTORIQUE (LOGS) ---
-function ajouterLog(action, statut) {
-    const maintenant = new Date();
-    const heureStr = maintenant.getHours().toString().padStart(2, '0') + ":" + maintenant.getMinutes().toString().padStart(2, '0');
-    
-    // Ajout dans la liste javascript
-    logs.unshift({ heure: heureStr, user: "Admin", action: action, statut: statut });
-
-    // Mise à jour visuelle du tableau HTML dans la section Historique
-    const tbody = document.getElementById('log-tbody');
-    if (tbody) {
-        tbody.innerHTML = logs.map(l => `
-            <tr>
-                <td>${l.heure}</td>
-                <td><strong>${l.user}</strong></td>
-                <td>${l.action}</td>
-                <td style="color: #10b981; font-weight: bold;">${l.statut}</td>
-            </tr>
-        `).join('');
-    }
+function updateToggle() {
+    document.getElementById('mode-encrypt').classList.toggle('active', mode === "encrypt");
+    document.getElementById('mode-decrypt').classList.toggle('active', mode === "decrypt");
 }
 
-// Bouton Quitter (Recharge la session)
-document.getElementById('btn-logout').addEventListener('click', () => {
-    location.reload();
-});
+document.getElementById('btn-process').onclick = () => {
+    const text = document.getElementById('text-input').value;
+    const key = document.getElementById('secret-key').value;
 
-// Générer un premier log de démarrage à l'ouverture de la page
-ajouterLog("Ouverture Session", "Initialisé");
+    if (!text || !key) return alert("Remplissez les champs !");
+
+    try {
+        if (mode === "encrypt") {
+            const res = CryptoJS.AES.encrypt(text, key).toString();
+            document.getElementById('text-output').value = res;
+            addLog("Chiffrement", "OK");
+        } else {
+            const res = CryptoJS.AES.decrypt(text, key).toString(CryptoJS.enc.Utf8);
+            if (!res) throw new Error();
+            document.getElementById('text-output').value = res;
+            addLog("Déchiffrement", "OK");
+        }
+    } catch (e) {
+        document.getElementById('text-output').value = "ERREUR : Clé incorrecte.";
+        addLog("Cryptanalyse", "ÉCHEC");
+    }
+};
+
+// --- TÉLÉCHARGEMENT ---
+document.getElementById('btn-download').onclick = () => {
+    // 1. On récupère le texte chiffré/déchiffré (ajuste 'text-output' si tu as nommé ta variable autrement dans ton code)
+    // Si tu stockes le résultat dans une variable globale (ex: resultatGlobal), utilise-la ici !
+    const content = document.getElementById('text-output') ? document.getElementById('text-output').value : "" ;
+    
+    // Si le contenu est vide, on essaie de récupérer ce qui a été traité pour le fichier
+    // Remplace 'resultatFichier' par le nom de la variable où tu as mis le résultat AES du PDF
+    const dataToDownload = content || window.resultatFichier; 
+
+    if (!dataToDownload) {
+        alert("Aucun fichier traité à télécharger !");
+        return;
+    }
+
+    // 2. Création du Blob (On force l'extension d'origine ou .txt pour le test)
+    const blob = new Blob([dataToDownload], { type: "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement("a");
+    a.href = url;
+    
+    // Donne un nom dynamique au fichier téléchargé
+    a.download = "fichier_traite.pdf"; // Tu peux changer l'extension selon le besoin (.txt, .pdf...)
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    addLog("Export Fichier", "Téléchargé");
+};
+
+// --- SYSTÈME DE LOGS (HISTORIQUE) ---
+function addLog(action, etat) {
+    const now = new Date();
+    const time = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+    
+    logs.unshift({ time, user: userRole, action, etat }); // Ajoute au début
+
+    const tbody = document.getElementById('log-tbody');
+    tbody.innerHTML = logs.map(l => `
+        <tr>
+            <td>${l.time}</td>
+            <td style="text-transform:uppercase; font-size:12px;">${l.user}</td>
+            <td>${l.action}</td>
+            <td style="color: ${l.etat === 'OK' || l.etat === 'Succès' ? '#10b981' : '#ef4444'}">${l.etat}</td>
+        </tr>
+    `).join('');
+}
+
+// Déconnexion
+document.getElementById('btn-logout').onclick = () => location.reload();
