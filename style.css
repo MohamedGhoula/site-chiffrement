@@ -1,0 +1,53 @@
+/* DESIGN CYBER DARK */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background-color: #030712; color: #f3f4f6; font-family: 'Segoe UI', Roboto, sans-serif; height: 100vh; overflow: hidden; }
+
+/* LOGIN */
+.container { display: flex; justify-content: center; align-items: center; height: 100vh; background: radial-gradient(circle, #111827 0%, #030712 100%); }
+.card { background: #111827; padding: 40px; border-radius: 15px; border: 1px solid #1f2937; width: 380px; text-align: center; }
+.login-icon { font-size: 50px; color: #38bdf8; margin-bottom: 20px; }
+
+/* DASHBOARD */
+.dashboard-container { display: flex; height: 100vh; }
+.sidebar { width: 280px; background: #0f172a; border-right: 1px solid #1e293b; padding: 25px; display: flex; flex-direction: column; }
+.sidebar-header h3 { color: #38bdf8; letter-spacing: 2px; }
+.sidebar-header span { color: #fff; }
+.badge { background: #1e293b; color: #38bdf8; padding: 5px 10px; border-radius: 5px; font-size: 12px; margin-top: 10px; display: inline-block; }
+
+.nav-links { list-style: none; margin-top: 50px; flex-grow: 1; }
+.nav-links li { padding: 15px; color: #94a3b8; cursor: pointer; border-radius: 8px; margin-bottom: 5px; font-size: 18px; }
+.nav-links li:hover, .nav-links li.active { background: #1e293b; color: #38bdf8; }
+.nav-links i { margin-right: 10px; width: 25px; }
+
+.content-area { flex-grow: 1; padding: 50px; overflow-y: auto; background: #030712; }
+.header-section { margin-bottom: 40px; }
+.header-section h2 { font-size: 32px; color: #38bdf8; }
+
+/* COMPOSANTS */
+.panel { background: #111827; padding: 25px; border-radius: 12px; border: 1px solid #1f2937; }
+.encryption-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.form-group { margin: 20px 0; text-align: left; }
+.form-group label { color: #94a3b8; display: block; margin-bottom: 8px; font-size: 14px; }
+
+input, select, textarea { width: 100%; padding: 12px; background: #1f2937; border: 1px solid #374151; border-radius: 8px; color: #fff; }
+textarea { height: 180px; font-family: monospace; }
+
+.btn { width: 100%; padding: 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; background: #38bdf8; color: #030712; }
+.btn-success { background: #10b981; color: #fff; }
+.btn-secondary { background: #4b5563; color: #fff; margin-bottom: 10px; }
+.btn-danger { background: #ef4444; color: #fff; }
+
+.toggle-container { display: flex; background: #1f2937; padding: 5px; border-radius: 8px; margin-bottom: 20px; }
+.toggle-btn { flex: 1; background: none; border: none; color: #94a3b8; padding: 10px; cursor: pointer; border-radius: 6px; font-weight: bold; }
+.toggle-btn.active { background: #38bdf8; color: #030712; }
+
+/* TABLE & PARAMS */
+.log-table { width: 100%; border-collapse: collapse; color: #cbd5e1; }
+.log-table th { text-align: left; padding: 15px; background: #1e293b; color: #38bdf8; }
+.log-table td { padding: 15px; border-bottom: 1px solid #1e293b; }
+
+.params-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.card-param { background: #111827; padding: 20px; border-radius: 12px; border-left: 4px solid #38bdf8; }
+.card-param h3 { color: #38bdf8; margin-bottom: 15px; font-size: 18px; }
+.card-param p { margin-bottom: 10px; font-size: 14px; }
+.status-online { color: #10b981; font-weight: bold; }
